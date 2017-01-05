@@ -2,12 +2,12 @@ import hashlib
 import codecs
 
 
-LENGTH_BITMAP = 32
-NUM_HASH_FAMILIES = 50
+LENGTH_BITMAP = 18
+NUM_HASH_FAMILIES = 72
 
 
 def hash_family(i):
-    result_size = LENGTH_BITMAP / 8  # how many bytes we want back
+    result_size = LENGTH_BITMAP / 4  # how many bytes we want back
     max_len = NUM_HASH_FAMILIES  # how long can our i be (in decimal)
     salt = str(i).zfill(max_len)[-max_len:]
 
@@ -29,7 +29,7 @@ def ip_file():
         with codecs.open("ip.txt", 'w') as f_handle:
             for line in file_handle:
                 counter += 1
-                if counter > 8000:
+                if counter > 100000:
                     break
                 split = line.split(" - - ")
                 f_handle.write(split[0])
