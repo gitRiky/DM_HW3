@@ -2,11 +2,11 @@ import codecs
 import utility
 import numpy
 
-LENGTH_BITMAP = 18
-NUM_HASH_FAMILIES = 72
-GROUP_SIZE = 6
+LENGTH_BITMAP = 64
+NUM_HASH_FAMILIES = 32
+GROUP_SIZE = 2
 HEX_LEN = LENGTH_BITMAP / 4
-FILE_NAME = "sim.txt"
+FILE_NAME = "ip.txt"
 
 
 def get_binary_representation(number):
@@ -75,19 +75,18 @@ def bf_duplicates(file_handle):
             dict[line] = dict[line] + 1
         else:
             dict[line] = 1
-    print "number of different elements = ", len(dict.keys())
+    return len(dict.keys())
 
 
 def main():
+    output = file("output_ip_4.txt", 'w')
     with codecs.open(FILE_NAME, 'r') as file_handle:
-        bf_duplicates(file_handle)
+        result = bf_duplicates(file_handle)
+        output.write("The number of distinct elements are " + str(result) + "\n")
     with codecs.open(FILE_NAME, 'r') as file_handle:
         result = estimate_f0(file_handle)
-    print "The number of estimated different elements is ", result
+        output.write("The number of estimated distinct elements with HASH_FAMILIES = " + str(NUM_HASH_FAMILIES))
+        output.write(" and group size = " + str(GROUP_SIZE) + " is equal to " + str(result))
+    output.close()
 
-
-with codecs.open("sim.txt", 'w') as f:
-    for i in range(1,200000):
-        f.write(str(i % 100))
-        f.write("\n")
 main()

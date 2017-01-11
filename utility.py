@@ -2,8 +2,8 @@ import hashlib
 import codecs
 
 
-LENGTH_BITMAP = 18
-NUM_HASH_FAMILIES = 72
+LENGTH_BITMAP = 64
+NUM_HASH_FAMILIES = 20
 
 
 def hash_family(i):
