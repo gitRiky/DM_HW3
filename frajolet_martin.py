@@ -3,10 +3,10 @@ import utility
 import numpy
 
 LENGTH_BITMAP = 64
-NUM_HASH_FAMILIES = 32
-GROUP_SIZE = 2
+NUM_HASH_FAMILIES = 100
+GROUP_SIZE = 5
 HEX_LEN = LENGTH_BITMAP / 4
-FILE_NAME = "ip.txt"
+FILE_NAME = "1G_tweets_hashtags.txt"
 
 
 def get_binary_representation(number):
@@ -79,7 +79,7 @@ def bf_duplicates(file_handle):
 
 
 def main():
-    output = file("output_ip_4.txt", 'w')
+    output = file("output_twitter_f0.txt", 'w')
     with codecs.open(FILE_NAME, 'r') as file_handle:
         result = bf_duplicates(file_handle)
         output.write("The number of distinct elements are " + str(result) + "\n")

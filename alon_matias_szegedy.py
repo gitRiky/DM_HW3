@@ -4,10 +4,9 @@ import utility
 import numpy
 
 
-N = 320000
-FILE_NAME = "ip.txt"
+N = 266302
+FILE_NAME = "1G_tweets_hashtags.txt"
 VARIABLES_NUM = 100
-
 
 # compute the f2 in the brute force way
 def bf_f2(file_handle):
@@ -28,7 +27,7 @@ def bf_f2(file_handle):
 
 
 def main():
-    output = file("output_f2_ip_3.txt", 'w')
+    output = file("output_twitter_f2.txt", 'w')
     with codecs.open(FILE_NAME) as file_handle:
         result = bf_f2(file_handle)
         output.write("Exact value for f2 = " + str(result) + "\n")
