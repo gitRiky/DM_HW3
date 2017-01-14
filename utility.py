@@ -48,6 +48,15 @@ def get_least_sign_bit(number):
     # print "binary = " + b_number
     return config.LENGTH_BITMAP - 1 - b_number.rfind("1")
 
+
+# same probability for even and odd
+def my_hash(element):
+    if hash(element) % 2 == 0:
+        return 1
+    else:
+        return -1
+
+
 class proceed:
     def __init__(self):
         self.c = "y"

@@ -35,7 +35,7 @@ def compute_average(estimations, size):
         sum += estimation
         counter += 1
         if counter == size:
-            averages.append(float(sum) / float(counter))
+            averages.append(sum / counter)
             sum = 0
             counter = 0
     return averages
@@ -61,10 +61,10 @@ def bf_duplicates(file_handle):
 
 def main():
     output = file("output_twitter_f0.txt", 'w')
-    with codecs.open(FILE_NAME, 'r') as file_handle:
+    with codecs.open(FILE_NAME, 'r', encoding="utf-8") as file_handle:
         result = bf_duplicates(file_handle)
         output.write("The number of distinct elements are " + str(result) + "\n")
-    with codecs.open(FILE_NAME, 'r') as file_handle:
+    with codecs.open(FILE_NAME, 'r', encoding="utf-8") as file_handle:
         result = estimate_f0(file_handle)
         output.write("The number of estimated distinct elements with HASH_FAMILIES = " + str(config.NUM_HASH_FAMILIES))
         output.write(" and group size = " + str(config.GROUP_SIZE) + " is equal to " + str(result))

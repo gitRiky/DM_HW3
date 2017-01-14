@@ -15,8 +15,6 @@ TWEET_COUNT = 1000
 # if yes, then update the max_tail and execute a new estimation, otherwise
 # return an empty list
 def update_f0(line, max_tail, hash_functions):
-    print line
-    print max_tail
     index = 0
     update = False
     for hash_function in hash_functions:
@@ -42,15 +40,19 @@ def compute_average(estimations, size):
         sum += estimation
         counter += 1
         if counter == size:
-            averages.append(float(sum) / float(counter))
+            averages.append(sum / counter)
             sum = 0
             counter = 0
     return averages
 
 
-def init_f0(n_hash_function):
-    max_tail = [0] * n_hash_function
-    return max_tail
+def update_f2(line, z, hash_functions):
+    for i in range(0, config.NUM_HASH_FAMILIES):
+        z[i] += utility.my_hash(hash_functions[i](line))
+    estimates = []
+    for elem in z:
+        estimates.append(elem ** 2)
+    return int(numpy.average(estimates))
 
 
 def main():
@@ -68,8 +70,9 @@ def main():
     # After that, it computes the new max_tail and, if it changes, then
     # compute a new estimation, otherwise not
     class StdOutListener(StreamListener):
-        estimation = []
+        f0 = 0
         counter = 0
+        total_counter = 0
 
         def on_data(self, data):
             json_data = json.loads(data)
@@ -79,16 +82,21 @@ def main():
                     StdOutListener.counter += 1
                     for hashtag in json_data["entities"]["hashtags"]:
                         # write hashtag into the output file
-                        file_handle.write(hashtag["text"])
+                        StdOutListener.total_counter += 1
+                        value = hashtag['text']
+                        file_handle.write(value)
                         file_handle.write("\n")
                         # compute the new max_tail
-                        new_estimation = update_f0(hashtag['text'], max_tail, hash_functions)
-                        print max_tail
-                        if len(new_estimation) > 0:     # it means that the estimation has been changed
-                            StdOutListener.estimation = new_estimation
-                            result = numpy.median(compute_average(StdOutListener.estimation, config.GROUP_SIZE))
-                            print max_tail
-                            print "Estimation has been changed, is equal to " + str(result)
+                        new_est = update_f0(value, max_tail, hash_functions)
+                        if len(new_est) > 0:     # it means that the estimation has been changed
+                            StdOutListener.f0 = int(numpy.median(compute_average(new_est, config.GROUP_SIZE)))
+                        # compute new f2
+                        new_f2 = update_f2(value, z, hash_functions)
+                        # print f0 and f2
+                        print "Number of hashtags that have been seen =", StdOutListener.total_counter
+                        print "Estimated f0 =", StdOutListener.f0
+                        print "Estimated f2 =", new_f2
+                        print
             if StdOutListener.counter == TWEET_COUNT:
                 StdOutListener.counter = 0
                 if raw_input("We analyzed " + TWEET_COUNT + " tweets, do you want to continue? y or n\n") == "n":
@@ -106,7 +114,9 @@ def main():
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
-    max_tail = init_f0(config.NUM_HASH_FAMILIES)
+    # initialize both max_tail and z
+    max_tail = [0] * config.NUM_HASH_FAMILIES
+    z = [0] * config.NUM_HASH_FAMILIES
     with codecs.open("live.txt", "w", encoding='utf-8') as file_handle:
         while proceed.get_c() != "n":
             try:
